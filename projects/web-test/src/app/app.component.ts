@@ -74,8 +74,10 @@ import {
                 Lorem ipsum 4
               </nrp-option>
             </nrp-select>
-  
-            <nrp-select formControlName="select2" multi>
+          </nrp-form-field>
+
+          <nrp-form-field>
+            <nrp-select formControlName="select2" [disabled]="true">
               <nrp-option [value]="1">
                 Lorem ipsum 1
               </nrp-option>
@@ -83,6 +85,23 @@ import {
                 Lorem ipsum 2
               </nrp-option>
               <nrp-option [value]="3">
+                Lorem ipsum 3
+              </nrp-option>
+              <nrp-option [value]="4">
+                Lorem ipsum 4
+              </nrp-option>
+            </nrp-select>
+          </nrp-form-field>
+
+          <nrp-form-field class="w-64">
+            <nrp-select formControlName="select3" [value]="3" multi>
+              <nrp-option [value]="1">
+                Lorem ipsum 1
+              </nrp-option>
+              <nrp-option [value]="2">
+                Lorem ipsum 2
+              </nrp-option>
+              <nrp-option [value]="3" disabled>
                 Lorem ipsum 3
               </nrp-option>
               <nrp-option [value]="4">
@@ -103,7 +122,8 @@ export class AppComponent {
   formBuilder = inject(FormBuilder);
   formGroup = this.formBuilder.group({
     select1: new FormControl(2),
-    select2: new FormControl([])
+    select2: new FormControl([]),
+    select3: new FormControl(undefined),
   });
 
   constructor() {

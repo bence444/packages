@@ -16,17 +16,21 @@ import {
   output,
   signal
 } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  takeUntilDestroyed,
+  toObservable
+} from '@angular/core/rxjs-interop';
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR
+} from '@angular/forms';
 import { SelectionModel } from '@angular/cdk/collections';
 import {
   ConnectedPosition,
   Overlay,
   OverlayModule
 } from '@angular/cdk/overlay';
-import {
-  takeUntilDestroyed,
-  toObservable
-} from '@angular/core/rxjs-interop';
+
 import { Subject, takeUntil } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
 
@@ -52,7 +56,7 @@ export interface SelectStyle extends BaseComponentInterface {
 const selectStyle: SelectStyle = {
   host: 'flex flex-auto gap-2 h-full',
   disabled: 'cursor-not-allowed',
-  trigger: 'flex flex-grow justify-start items-center px-2',
+  trigger: 'flex flex-grow justify-start items-center px-2 overflow-none text-nowrap',
   icon: 'flex items-center px-2',
   dropdown: 'flex flex-col flex-grow rounded-md py-2 bg-neutral-50 dark:bg-neutral-700'
 };
@@ -98,8 +102,7 @@ export const SELECT_DEFAULT = new InjectionToken<Partial<SelectProperties>>('Def
       useExisting: forwardRef(() => SelectComponent),
       multi: true
     }
-  ],
-  host: {}
+  ]
 })
 export class SelectComponent extends FormFieldAccessor
   implements ControlValueAccessor, AfterContentInit, OnInit, OnDestroy {
@@ -134,6 +137,14 @@ export class SelectComponent extends FormFieldAccessor
       this._style?.trigger,
       customAs.trigger
     ];
+
+    if (this._disabled()) {
+      classes.push(
+        selectStyle.disabled,
+        this._style?.disabled,
+        customAs.disabled
+      );
+    }
 
     return twMerge(classes);
   });
@@ -183,6 +194,9 @@ export class SelectComponent extends FormFieldAccessor
 
   // @ts-expect-error
   private _value: SelectionModel<unknown>;
+
+  private _inited = false;
+  private _initValue: unknown;
 
   readonly isOpened = signal(false);
 
@@ -239,11 +253,6 @@ export class SelectComponent extends FormFieldAccessor
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe(options => 
         this._mapOptions(options.map(x => x)));
-
-    console.log(this.value());
-    if (this.value()) {
-      this.writeValue(this.value());
-    }
   }
 
   ngOnDestroy(): void {
@@ -251,7 +260,12 @@ export class SelectComponent extends FormFieldAccessor
     this._destroyed.complete();
   }
 
-  writeValue(obj: any): void {
+  writeValue(obj: unknown): void {
+    if (!this._inited) {
+      this._initValue = obj;
+      return;
+    }
+
     this._mappedOptions.forEach(option => {
       if (option.value() === obj) {
         this._updateValue(option);
@@ -259,19 +273,23 @@ export class SelectComponent extends FormFieldAccessor
     });
   }
 
-  registerOnChange(fn: (value: any) => void): void {
+  registerOnChange(fn: (value: unknown) => void): void {
     this.onChangeFn = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouchFn = fn;
   }
   
-  setDisabledState?(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean): void {
+    if (!this._inited) {
+      return;
+    }
+
     this._disabled.set(isDisabled);
   }
 
-  onChangeFn: (value: any) => void = () => {};
+  onChangeFn: (value: unknown) => void = () => {};
   onTouchFn = () => {};
 
   open() {
@@ -305,9 +323,19 @@ export class SelectComponent extends FormFieldAccessor
         .pipe(takeUntil(this._destroyed))
         .subscribe(() => this._updateValue(option));
     });
+
+    if (!this._inited) {
+      options.forEach(option => {
+        if (option.value() === this.value() || option.value() === this._initValue) {
+          this._updateValue(option, true);
+        }
+      });
+
+      this._inited = true;
+    }
   }
 
-  private _updateValue(option: OptionComponent) {
+  private _updateValue(option: OptionComponent, initValue = false) {
     if (this._disabled()) {
       return;
     }
@@ -324,7 +352,9 @@ export class SelectComponent extends FormFieldAccessor
       valueToEmit = this._value.selected[0] ?? undefined;
     }
 
-    if (changed) {
+    option.setActive(this._value.isSelected(option.value()));
+
+    if (changed || initValue) {
       if (!this._value.isMultipleSelection()) {
         this.close();
       }

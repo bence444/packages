@@ -7,15 +7,19 @@ import {
   inject,
   InjectionToken,
   input,
-  output
+  linkedSignal,
+  output,
+  signal,
+  viewChild
 } from '@angular/core';
+import { outputToObservable } from '@angular/core/rxjs-interop';
 import { twMerge } from 'tailwind-merge';
 
 import {
   BaseComponentDirective,
   BaseComponentInterface
 } from '../../common';
-import { outputToObservable } from '@angular/core/rxjs-interop';
+import { SelectComponent } from '../select';
 
 /**
  * Styles of Option
@@ -29,7 +33,7 @@ export interface OptionStyle extends BaseComponentInterface {
  */
 const optionStyle: OptionStyle = {
   host: 'px-4 py-2 hover:bg-neutral-500 hover:bg-opacity-30 cursor-pointer',
-  disabled: 'cursor-not-allowed'
+  disabled: 'cursor-not-allowed text-opacity-75'
 };
 
 /**
@@ -39,11 +43,27 @@ export const OPTION_STYLE = new InjectionToken<Partial<OptionStyle>>('Default st
 
 @Component({
   selector: 'nrp-option',
-  imports: [],
-  template: `<ng-content />`,
+  template: `
+    <div class="flex gap-2">
+      @if (multi()) {
+        <span>
+          Y
+        </span>
+      }
+      
+      <span #content>
+        <ng-content />
+      </span>
+    </div>
+
+    @if (active()) {
+      <span>X</span>
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-      '(click)': '_click()'
+    'class': 'flex justify-between gap-2',
+    '(click)': '_click()'
   }
 })
 export class OptionComponent extends BaseComponentDirective {
@@ -58,7 +78,7 @@ export class OptionComponent extends BaseComponentDirective {
       customAs.host
     ];
 
-    if (this.disabled()) {
+    if (this._disabled()) {
       classes.push(
         optionStyle.disabled,
         this._style?.disabled,
@@ -72,18 +92,29 @@ export class OptionComponent extends BaseComponentDirective {
   value = input();
 
   disabled = input(false, { transform: booleanAttribute });
+  _disabled = linkedSignal(() => this.disabled());
 
   protected _clicked = output<void>();
   clicked = outputToObservable(this._clicked);
 
   private readonly _elementRef = inject(ElementRef);
+  private readonly _content = viewChild<ElementRef>('content');
+
+  private readonly _select = inject(SelectComponent);
+  multi = computed(() => this._select.multi());
+
+  active = signal(false);
 
   getNativeElement() {
-    return this._elementRef.nativeElement.innerHTML;
+    return this._content()!.nativeElement.innerHTML;
+  }
+
+  setActive(value: boolean) {
+    this.active.set(value);
   }
 
   private _click() {
-    if (this.disabled()) {
+    if (this._disabled()) {
       return;
     }
 

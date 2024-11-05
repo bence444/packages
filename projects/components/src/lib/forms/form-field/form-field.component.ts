@@ -5,7 +5,8 @@ import {
   contentChildren,
   inject,
   InjectionToken,
-  input} from '@angular/core';
+  input
+} from '@angular/core';
 import { twMerge } from 'tailwind-merge';
 
 import {
@@ -67,7 +68,6 @@ export const FORM_FIELD_DEFAULT = new InjectionToken<Partial<FormFieldProperties
 
 @Component({
   selector: 'nrp-form-field',
-  imports: [],
   template: `<ng-content />`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
