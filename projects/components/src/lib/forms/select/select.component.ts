@@ -85,7 +85,6 @@ export const SELECT_DEFAULT = new InjectionToken<Partial<SelectProperties>>('Def
 
 @Component({
   selector: 'nrp-select',
-  standalone: true,
   imports: [OverlayModule],
   templateUrl: './select.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -100,8 +99,7 @@ export const SELECT_DEFAULT = new InjectionToken<Partial<SelectProperties>>('Def
       multi: true
     }
   ],
-  host: {
-  }
+  host: {}
 })
 export class SelectComponent extends FormFieldAccessor
   implements ControlValueAccessor, AfterContentInit, OnInit, OnDestroy {
@@ -117,7 +115,7 @@ export class SelectComponent extends FormFieldAccessor
       customAs.host
     ];
 
-    if (this.disabled()) {
+    if (this._disabled()) {
       classes.push(
         selectStyle.disabled,
         this._style?.disabled,
@@ -270,15 +268,14 @@ export class SelectComponent extends FormFieldAccessor
   }
   
   setDisabledState?(isDisabled: boolean): void {
-    console.log('disabled', isDisabled);
-    // throw new Error('Method not implemented.');
+    this._disabled.set(isDisabled);
   }
 
   onChangeFn: (value: any) => void = () => {};
   onTouchFn = () => {};
 
   open() {
-    if (this.disabled()) {
+    if (this._disabled()) {
       return;
     }
 
@@ -290,7 +287,7 @@ export class SelectComponent extends FormFieldAccessor
   }
 
   close() {
-    if (this.disabled()) {
+    if (this._disabled()) {
       return;
     }
 
@@ -311,7 +308,7 @@ export class SelectComponent extends FormFieldAccessor
   }
 
   private _updateValue(option: OptionComponent) {
-    if (this.disabled()) {
+    if (this._disabled()) {
       return;
     }
 

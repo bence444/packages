@@ -1,7 +1,8 @@
 import {
   booleanAttribute,
   Directive,
-  input
+  input,
+  linkedSignal
 } from '@angular/core';
 
 import { BaseComponentDirective } from '../base';
@@ -16,5 +17,6 @@ export class FormFieldAccessor extends BaseComponentDirective {
    * Whether the component is disabled or not
    */
   disabled = input(false, { transform: booleanAttribute });
+  _disabled = linkedSignal(() => this.disabled());
 
 }

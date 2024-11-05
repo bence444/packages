@@ -39,12 +39,11 @@ export const OPTION_STYLE = new InjectionToken<Partial<OptionStyle>>('Default st
 
 @Component({
   selector: 'nrp-option',
-  standalone: true,
   imports: [],
   template: `<ng-content />`,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '(click)': '_click()'
+      '(click)': '_click()'
   }
 })
 export class OptionComponent extends BaseComponentDirective {

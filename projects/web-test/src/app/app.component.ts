@@ -5,7 +5,6 @@ import {
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
-import { RouterOutlet } from '@angular/router';
 
 import {
   BaseColor,
@@ -17,9 +16,7 @@ import {
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [
-    RouterOutlet,
     FormFieldComponent,
     InputDirective,
     SelectComponent,
@@ -34,7 +31,7 @@ import {
           <nrp-form-field [color]="color">
             <input nrpInput type="text" placeholder="Placeholder">
           </nrp-form-field>
-
+  
           <nrp-form-field [color]="color">
             <nrp-select>
               <nrp-option value="1">asdasdasd</nrp-option>
@@ -60,7 +57,7 @@ import {
             </nrp-select>
           </nrp-form-field>
         }
-
+  
         <form [formGroup]="formGroup">
           <nrp-form-field>
             <nrp-select formControlName="select1">
@@ -77,7 +74,7 @@ import {
                 Lorem ipsum 4
               </nrp-option>
             </nrp-select>
-
+  
             <nrp-select formControlName="select2" multi>
               <nrp-option [value]="1">
                 Lorem ipsum 1

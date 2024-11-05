@@ -67,7 +67,6 @@ export const FORM_FIELD_DEFAULT = new InjectionToken<Partial<FormFieldProperties
 
 @Component({
   selector: 'nrp-form-field',
-  standalone: true,
   imports: [],
   template: `<ng-content />`,
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -103,7 +102,7 @@ export class FormFieldComponent extends BaseComponentDirective {
   
   private readonly _accessorElements = contentChildren(FormFieldAccessor);
   readonly isDisabled = computed(() => this._accessorElements()
-    .map(x => x.disabled())
+    .map(x => x._disabled())
     .includes(true)
   );
 
