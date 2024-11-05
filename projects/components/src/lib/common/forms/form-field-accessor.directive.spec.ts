@@ -1,8 +1,8 @@
-import { FormFieldAccessorDirective } from './form-field-accessor.directive';
+import { FormFieldAccessor } from './form-field-accessor.directive';
 
-describe('FormFieldAccessorDirective', () => {
+describe('FormFieldAccessor', () => {
   it('should create an instance', () => {
-    const directive = new FormFieldAccessorDirective();
+    const directive = new FormFieldAccessor();
     expect(directive).toBeTruthy();
   });
 });

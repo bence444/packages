@@ -10,7 +10,7 @@ import {
 import { twMerge } from 'tailwind-merge';
 
 import {
-  BaseComponentDirective,
+  BaseComponent,
   BaseComponentInterface,
   FormFieldAccessor
 } from '../../common';
@@ -71,7 +71,7 @@ export const FORM_FIELD_DEFAULT = new InjectionToken<Partial<FormFieldProperties
   template: `<ng-content />`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormFieldComponent extends BaseComponentDirective {
+export class FormFieldComponent extends BaseComponent {
 
   private readonly _style = inject(FORM_FIELD_STYLE, { optional: true });
   override readonly host = computed(() => {

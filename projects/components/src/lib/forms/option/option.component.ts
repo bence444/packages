@@ -16,7 +16,7 @@ import { outputToObservable } from '@angular/core/rxjs-interop';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  BaseComponentDirective,
+  BaseComponent,
   BaseComponentInterface
 } from '../../common';
 import { SelectComponent } from '../select';
@@ -66,7 +66,7 @@ export const OPTION_STYLE = new InjectionToken<Partial<OptionStyle>>('Default st
     '(click)': '_click()'
   }
 })
-export class OptionComponent extends BaseComponentDirective {
+export class OptionComponent extends BaseComponent {
 
   private readonly _style = inject(OPTION_STYLE, { optional: true });
   override readonly host = computed(() => {

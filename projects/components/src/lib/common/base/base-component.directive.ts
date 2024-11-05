@@ -18,7 +18,7 @@ export interface BaseComponentInterface {
     '[class]': 'host()'
   }
 })
-export class BaseComponentDirective {
+export class BaseComponent {
   
   custom = input<Partial<BaseComponentInterface>>({ host: '' });
 

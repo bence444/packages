@@ -1,8 +1,8 @@
-import { BaseComponentDirective } from './base-component.directive';
+import { BaseComponent } from './base-component.directive';
 
-describe('BaseComponentDirective', () => {
+describe('BaseComponent', () => {
   it('should create an instance', () => {
-    const directive = new BaseComponentDirective();
+    const directive = new BaseComponent();
     expect(directive).toBeTruthy();
   });
 });

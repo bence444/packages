@@ -5,13 +5,13 @@ import {
   linkedSignal
 } from '@angular/core';
 
-import { BaseComponentDirective } from '../base';
+import { BaseComponent } from '../base';
 
 @Directive({
   selector: '[nrpFormFieldAccessor]',
   standalone: true
 })
-export class FormFieldAccessor extends BaseComponentDirective {
+export class FormFieldAccessor extends BaseComponent {
 
   /**
    * Whether the component is disabled or not
